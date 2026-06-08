@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Maison Dorée Menu</title>
   
-  <!-- Tailwind CSS for layout layout & Lucide Icons via CDN -->
+  <!-- Tailwind CSS & Lucide Icons via CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- React & Babel CDNs so it runs directly in the browser with zero setup -->
+  <!-- React & Babel CDNs -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -29,43 +29,58 @@
     .sticky-bar { position: sticky; top: 0; z-index: 50; background: #0A0A0A; padding: 12px 16px 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
     .search-wrap { position: relative; margin-bottom: 10px; }
     .search-input { width: 100%; background: #181818; border: 1px solid rgba(255,255,255,.09); border-radius: 12px; padding: 11px 36px; color: #F0EDE8; font-size: 14px; outline: none; }
-    .filters { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 10px; }
-    .fpill { padding: 5px 13px; border-radius: 20px; font-size: 12px; font-weight: 500; white-space: nowrap; border: 1px solid rgba(255,255,255,.1); background: #181818; color: #888; }
-    .fpill.on { background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.4); color: #C9A84C; }
-    .catbar { display: flex; overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
-    .catbtn { padding: 10px 14px; font-size: 13px; font-weight: 500; color: #555; background: none; border: none; border-bottom: 2px solid transparent; white-space: nowrap; }
-    .catbtn.on { color: #C9A84C; border-bottom-color: #C9A84C; }
-    .card { display: flex; gap: 12px; padding: 14px; background: #141414; border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; margin-bottom: 10px; }
-    .dprice { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700; color: #C9A84C; }
-    .toast { position: fixed; top: 22px; left: 50%; transform: translateX(-50%); background: #222; border: 1px solid rgba(255,255,255,.12); color: #F0EDE8; padding: 10px 22px; border-radius: 50px; font-size: 13px; z-index: 200; }
+    .catbar { display: flex; overflow-x: auto; margin: 0 -16px; padding: 0 16px; gap: 4px; }
+    .catbtn { padding: 12px 16px; font-size: 13px; font-weight: 500; color: #777; background: none; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s; }
+    .catbtn.on { color: #C9A84C; border-bottom-color: #C9A84C; font-weight: 600; }
+    .card { display: flex; gap: 12px; padding: 16px; background: #141414; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; margin-bottom: 12px; transition: transform 0.1s; }
+    .card:active { transform: scale(0.98); }
+    .dprice { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 700; color: #C9A84C; margin-top: 4px; }
+    .toast { position: fixed; top: 22px; left: 50%; transform: translateX(-50%); background: #1E1E1E; border: 1px solid rgba(201,168,76,0.3); color: #F0EDE8; padding: 12px 24px; border-radius: 50px; font-size: 13px; z-index: 200; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); }
   </style>
 </head>
 <body>
 
   <div id="root"></div>
 
-  <!-- Script compilation directly in browser via Babel -->
   <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+    const { useState } = React;
 
     const RESTAURANT = {
       name: "Maison Dorée",
       tagline: "Modern Mediterranean Brasserie",
       heroImage: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80",
-      table: "Table 7",
-      currency: "$"
+      table: "VIP Lounge",
+      currency: " MAD"
     };
 
     const CATEGORIES = [
-      { id: "starters", label: "Starters", emoji: "🥗" },
-      { id: "mains",    label: "Mains",    emoji: "🥩" },
-      { id: "drinks",   label: "Drinks",   emoji: "🍷" }
+      { id: "starters", label: "Starters & Salads", emoji: "🥗" },
+      { id: "mains",    label: "Main Courses",      emoji: "🥩" },
+      { id: "desserts", label: "Desserts",          emoji: "✨" },
+      { id: "drinks",   label: "Beverages",         emoji: "🍷" }
     ];
 
     const MENU = [
-      { id: 1, category: "starters", name: "Burrata & Heirloom Tomatoes", price: 18, description: "Creamy burrata with vine-ripened heirloom tomatoes, fresh basil oil." },
-      { id: 2, category: "mains", name: "45-Day Côte de Boeuf", price: 68, description: "Dry-aged prime rib, pommes dauphine, bone marrow butter, red wine jus." },
-      { id: 3, category: "drinks", name: "Negroni Sbagliato", price: 16, description: "Campari, sweet vermouth, Franciacorta Prosecco, blood orange twist." }
+      // STARTERS & SALADS
+      { id: 1, category: "starters", name: "Burrata d'Andria", price: 120, description: "Creamy burrata, heirloom cherry tomatoes, cold-pressed basil olive oil, aged balsamic." },
+      { id: 2, category: "starters", name: "Classic Caesar Salad", price: 95, description: "Crisp romaine lettuce, parmigiano-reggiano shaving, garlic herb croutons, signature dressing." },
+      { id: 3, category: "starters", name: "Mediterranean Octopus", price: 140, description: "Thinly sliced charred octopus, citrus segment emulsion, micro-greens." },
+
+      // MAINS
+      { id: 4, category: "mains", name: "45-Day Dry Aged Entrecôte", price: 290, description: "Prime beef ribeye served with velvety pommes purée, wild mushroom jus." },
+      { id: 5, category: "mains", name: "Pan-Seared Sea Bass", price: 240, description: "Fresh local line-caught fish, asparagus spears, saffron-infused butter reduction." },
+      { id: 6, category: "mains", name: "Truffle Tagliolini", price: 185, description: "Fresh homemade egg pasta tossed in a rich Umbrian black truffle cream sauce." },
+
+      // DESSERTS
+      { id: 7, category: "desserts", name: "Le Grand Tiramisu", price: 85, description: "Layers of delicate espresso-soaked ladyfingers, velvety mascarpone cream, dark cocoa powder." },
+      { id: 8, category: "desserts", name: "Molten Chocolate Fondant", price: 90, description: "Warm Valrhona chocolate cake with a molten core, paired with premium vanilla bean gelato." },
+      { id: 9, category: "desserts", name: "Saffron Panna Cotta", price: 75, description: "Silky cream infused with local saffron strands, wild berry compote overlay." },
+
+      // BEVERAGES
+      { id: 10, category: "drinks", name: "Signature Mint Mojito", price: 65, description: "Fresh crushed garden mint, zesty lime wedges, organic brown sugar, sparkling soda." },
+      { id: 11, category: "drinks", name: "Premium Passion Fruit Mojito", price: 70, description: "Exotic passion fruit pulp, fresh lime juices, fresh mint bouquet, aromatic splash." },
+      { id: 12, category: "drinks", name: "Coca-Cola / Zero", price: 35, description: "Served perfectly chilled with sliced organic lemon and crystal ice cubes." },
+      { id: 13, category: "drinks", name: "Infused Pure Water (750ml)", price: 40, description: "Premium local spring water softly infused with fresh cucumber and mint slices." }
     ];
 
     function App() {
@@ -75,14 +90,18 @@
 
       const fireToast = (msg) => {
         setToast(msg);
-        setTimeout(() => setToast(null), 2000);
+        setTimeout(() => setToast(null), 2500);
       };
 
-      const visible = MENU.filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
+      // Filter logic for live search bar tracking
+      const filteredItems = MENU.filter(item => 
+        item.name.toLowerCase().includes(query.toLowerCase()) || 
+        item.description.toLowerCase().includes(query.toLowerCase())
+      );
 
       return (
         <div className="app">
-          {/* Hero */}
+          {/* Top Hero Banner */}
           <div className="hero">
             <img src={RESTAURANT.heroImage} alt={RESTAURANT.name} />
             <div className="hero-ov">
@@ -92,12 +111,12 @@
             <div className="table-badge">{RESTAURANT.table}</div>
           </div>
 
-          {/* Sticky Controls */}
+          {/* Sticky Filtering & Navigation Control Center */}
           <div className="sticky-bar">
             <div className="search-wrap">
               <input 
                 className="search-input" 
-                placeholder="Search dishes..." 
+                placeholder="Search dishes, drinks, ingredients..." 
                 value={query} 
                 onChange={e => setQuery(e.target.value)} 
               />
@@ -115,24 +134,30 @@
             </div>
           </div>
 
-          {/* Content List */}
+          {/* Interactive Dynamic Content Rendering */}
           <div className="p-4 pb-24">
-            {visible.filter(i => i.category === activecat).map(dish => (
-              <div key={dish.id} className="card" onClick={() => fireToast(`✨ Selected ${dish.name}`)}>
-                <div className="flex-1">
-                  <div className="text-base font-semibold mb-1">{dish.name}</div>
-                  <div className="text-xs text-gray-500 mb-2">{dish.description}</div>
-                  <div className="dprice">{RESTAURANT.currency}{dish.price}</div>
+            {filteredItems.filter(i => i.category === activecat).length > 0 ? (
+              filteredItems.filter(i => i.category === activecat).map(dish => (
+                <div key={dish.id} className="card" onClick={() => fireToast(`✨ Added ${dish.name} to order list`)}>
+                  <div className="flex-1">
+                    <div className="text-base font-semibold mb-1 text-[#F0EDE8]">{dish.name}</div>
+                    <div className="text-xs text-gray-400 font-light leading-relaxed mb-2">{dish.description}</div>
+                    <div className="dprice">{dish.price}{RESTAURANT.currency}</div>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="text-center py-12 text-sm text-gray-500">
+                No items match your specific preference.
               </div>
-            ))}
+            )}
           </div>
 
-          {/* Direct Waiter Button */}
+          {/* Quick Call Waiter Floating Button */}
           <div className="fixed bottom-6 right-6 z-50">
             <button 
-              className="w-14 h-14 rounded-full bg-[#C9A84C] text-black shadow-lg flex items-center justify-center text-xl font-bold"
-              onClick={() => fireToast("🔔 Waiter called successfully!")}
+              className="w-14 h-14 rounded-full bg-[#C9A84C] text-black shadow-xl flex items-center justify-center text-xl font-bold hover:scale-105 active:scale-95 transition-transform"
+              onClick={() => fireToast("🔔 Waiter notified. Attendant attending shortly.")}
             >
               🔔
             </button>
@@ -143,7 +168,6 @@
       );
     }
 
-    // Mount everything cleanly
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
