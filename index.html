@@ -1,175 +1,678 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maison Dorée Menu</title>
-  
-  <!-- Tailwind CSS & Lucide Icons via CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maison Zephyr — Fine Dining</title>
 
-  <!-- React & Babel CDNs -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+            sans:  ['Figtree', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            gold: {
+              DEFAULT: '#C9A84C',
+              light:   '#E0C870',
+              dark:    '#9A7A2F',
+              muted:   'rgba(201,168,76,0.15)',
+            },
+            cream: '#F0EDE8',
+            'glass-dark': 'rgba(10,8,6,0.55)',
+            'glass-card': 'rgba(18,14,10,0.60)',
+            'glass-nav':  'rgba(8,6,4,0.80)',
+          },
+          backdropBlur: { xs: '4px' },
+          keyframes: {
+            fadeSlideDown: {
+              '0%':   { opacity: '0', transform: 'translateY(-18px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            fadeSlideUp: {
+              '0%':   { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            toastIn: {
+              '0%':   { opacity: '0', transform: 'translateY(24px) scale(0.95)' },
+              '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+            },
+            toastOut: {
+              '0%':   { opacity: '1', transform: 'translateY(0) scale(1)' },
+              '100%': { opacity: '0', transform: 'translateY(24px) scale(0.95)' },
+            },
+            shimmer: {
+              '0%':   { backgroundPosition: '-400px 0' },
+              '100%': { backgroundPosition: '400px 0' },
+            },
+          },
+          animation: {
+            fadeSlideDown: 'fadeSlideDown 0.7s ease both',
+            fadeSlideUp:   'fadeSlideUp 0.7s ease both',
+            toastIn:       'toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both',
+            toastOut:      'toastOut 0.3s ease both',
+            shimmer:       'shimmer 2s linear infinite',
+          },
+        },
+      },
+    };
+  </script>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.474.0/dist/umd/lucide.min.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Figtree:wght@300;400;500;600&display=swap');
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { background: #0A0A0A; color: #F0EDE8; font-family: 'Figtree', sans-serif; -webkit-font-smoothing: antialiased; }
-    ::-webkit-scrollbar { display: none; }
-    .app { max-width: 430px; margin: 0 auto; min-height: 100vh; background: #0A0A0A; position: relative; overflow-x: hidden; }
-    .hero { position: relative; height: 230px; overflow: hidden; }
-    .hero img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.42); }
-    .hero-ov { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,10,10,0) 25%, #0A0A0A 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 0 20px 22px; }
-    .hero-name { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 700; color: #F0EDE8; line-height: 1; }
-    .hero-sub { font-size: 11px; font-weight: 500; color: #C9A84C; letter-spacing: 2.5px; text-transform: uppercase; margin-top: 5px; }
-    .table-badge { position: absolute; top: 16px; right: 16px; background: rgba(201,168,76,.12); border: 1px solid rgba(201,168,76,0.4); color: #C9A84C; font-size: 11px; font-weight: 600; padding: 5px 13px; border-radius: 20px; }
-    .sticky-bar { position: sticky; top: 0; z-index: 50; background: #0A0A0A; padding: 12px 16px 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
-    .search-wrap { position: relative; margin-bottom: 10px; }
-    .search-input { width: 100%; background: #181818; border: 1px solid rgba(255,255,255,.09); border-radius: 12px; padding: 11px 36px; color: #F0EDE8; font-size: 14px; outline: none; }
-    .catbar { display: flex; overflow-x: auto; margin: 0 -16px; padding: 0 16px; gap: 4px; }
-    .catbtn { padding: 12px 16px; font-size: 13px; font-weight: 500; color: #777; background: none; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s; }
-    .catbtn.on { color: #C9A84C; border-bottom-color: #C9A84C; font-weight: 600; }
-    .card { display: flex; gap: 12px; padding: 16px; background: #141414; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; margin-bottom: 12px; transition: transform 0.1s; }
-    .card:active { transform: scale(0.98); }
-    .dprice { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 700; color: #C9A84C; margin-top: 4px; }
-    .toast { position: fixed; top: 22px; left: 50%; transform: translateX(-50%); background: #1E1E1E; border: 1px solid rgba(201,168,76,0.3); color: #F0EDE8; padding: 12px 24px; border-radius: 50px; font-size: 13px; z-index: 200; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #0a0806; font-family: 'Figtree', sans-serif; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.35); border-radius: 3px; }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .gold-divider {
+      width: 60px; height: 1px;
+      background: linear-gradient(to right, transparent, #C9A84C, transparent);
+      margin: 0 auto;
+    }
+    .gold-divider-full {
+      width: 100%; height: 1px;
+      background: linear-gradient(to right, transparent, rgba(201,168,76,0.4), transparent);
+    }
+
+    .card-glass {
+      background: rgba(18,14,10,0.62);
+      border: 1px solid rgba(201,168,76,0.18);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .card-glass:hover {
+      border-color: rgba(201,168,76,0.38);
+      background: rgba(22,18,12,0.72);
+    }
+
+    .nav-glass {
+      background: rgba(8,6,4,0.82);
+      border-bottom: 1px solid rgba(201,168,76,0.14);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .input-glass {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(201,168,76,0.22);
+      color: #F0EDE8;
+      outline: none;
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .input-glass::placeholder { color: rgba(240,237,232,0.38); }
+    .input-glass:focus {
+      border-color: rgba(201,168,76,0.55);
+      background: rgba(255,255,255,0.09);
+    }
+
+    .cat-btn {
+      font-family: 'Figtree', sans-serif;
+      font-size: 13px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 8px 20px; border-radius: 2px;
+      border: 1px solid transparent;
+      cursor: pointer; white-space: nowrap;
+      transition: all 0.25s ease;
+      color: rgba(240,237,232,0.55);
+      background: transparent;
+    }
+    .cat-btn:hover { color: #C9A84C; border-color: rgba(201,168,76,0.3); }
+    .cat-btn.active {
+      color: #0a0806;
+      background: #C9A84C;
+      border-color: #C9A84C;
+    }
+
+    .call-btn {
+      background: #C9A84C;
+      box-shadow: 0 4px 24px rgba(201,168,76,0.35), 0 0 0 0 rgba(201,168,76,0);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .call-btn:hover {
+      transform: scale(1.06);
+      box-shadow: 0 6px 32px rgba(201,168,76,0.5);
+    }
+    .call-btn:active { transform: scale(0.95); }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: #F0EDE8;
+    }
+
+    .menu-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .menu-card:active { transform: scale(0.97); }
+    .menu-card:hover { box-shadow: 0 8px 40px rgba(0,0,0,0.45); }
+
+    .dish-img {
+      width: 88px; height: 88px;
+      border-radius: 2px;
+      object-fit: cover;
+      border: 1px solid rgba(201,168,76,0.2);
+      flex-shrink: 0;
+    }
+
+    .badge-table {
+      border: 1px solid rgba(201,168,76,0.5);
+      color: #C9A84C;
+      font-family: 'Figtree', sans-serif;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 2px;
+    }
+
+    .tag {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 2px;
+    }
+
+    .toast-glass {
+      background: rgba(18,14,10,0.92);
+      border: 1px solid rgba(201,168,76,0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,168,76,0.1);
+    }
+
+    .hero-logo-ring {
+      width: 90px; height: 90px;
+      border: 1px solid rgba(201,168,76,0.4);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .hero-logo-ring::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 50%;
+    }
+
+    .no-results-icon {
+      width: 56px; height: 56px;
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
   </style>
 </head>
 <body>
+<div id="root"></div>
 
-  <div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
 
-  <script type="text/babel">
-    const { useState } = React;
+/* ─── DATA ────────────────────────────────────────────────────── */
+const MENU = [
+  /* STARTERS */
+  {
+    id: 1, category: 'Starters',
+    name: 'Beluga Caviar & Blinis',
+    desc: 'Hand-crafted buckwheat blinis topped with 30g Beluga caviar, crème fraîche, and micro chives. A timeless overture.',
+    price: 890,
+    tag: 'Signature',
+    tagColor: 'rgba(201,168,76,0.18)',
+    tagText: '#C9A84C',
+    img: 'https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?w=200&q=70&fit=crop',
+  },
+  {
+    id: 2, category: 'Starters',
+    name: 'Foie Gras Torchon',
+    desc: 'Silky duck foie gras, slow-cured with Sauternes and black truffle, served with toasted brioche and Périgord fig compote.',
+    price: 420,
+    tag: null,
+    img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&q=70&fit=crop',
+  },
+  {
+    id: 3, category: 'Starters',
+    name: 'Langoustine Bisque',
+    desc: 'Velvety Scottish langoustine broth, finished with Armagnac, saffron cream, and a single poached langoustine tail.',
+    price: 290,
+    tag: null,
+    img: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=200&q=70&fit=crop',
+  },
+  {
+    id: 4, category: 'Starters',
+    name: 'Burrata & Heirloom Tomato',
+    desc: 'Imported Pugliese burrata, aged balsamic reduction, Moroccan argan oil, fleur de sel, and edible nasturtium blossoms.',
+    price: 210,
+    tag: 'Seasonal',
+    tagColor: 'rgba(95,158,120,0.18)',
+    tagText: '#5F9E78',
+    img: 'https://images.unsplash.com/photo-1529042410759-befb1204b468?w=200&q=70&fit=crop',
+  },
+  /* MAINS */
+  {
+    id: 5, category: 'Mains',
+    name: 'Black Truffle Tagliolini',
+    desc: 'House-made egg pasta tossed in brown butter with 15g fresh Périgord black truffle, aged Parmigiano-Reggiano, and truffle jus.',
+    price: 580,
+    tag: "Chef's Choice",
+    tagColor: 'rgba(201,168,76,0.18)',
+    tagText: '#C9A84C',
+    img: 'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=200&q=70&fit=crop',
+  },
+  {
+    id: 6, category: 'Mains',
+    name: 'Dry-Aged Wagyu Côte de Bœuf',
+    desc: '45-day dry-aged A5 Japanese Wagyu, 600g, served with pommes soufflées, bone marrow butter, and a vintage Bordeaux reduction.',
+    price: 1490,
+    tag: 'Premium',
+    tagColor: 'rgba(160,90,60,0.2)',
+    tagText: '#C07050',
+    img: 'https://images.unsplash.com/photo-1546964124-0cce460f38ef?w=200&q=70&fit=crop',
+  },
+  {
+    id: 7, category: 'Mains',
+    name: 'Whole Roasted Sea Bass',
+    desc: 'Atlantic sea bass en croûte de sel, filleted tableside, with sauce vierge, fennel confit, and saffron-laced couscous royale.',
+    price: 650,
+    tag: null,
+    img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=200&q=70&fit=crop',
+  },
+  {
+    id: 8, category: 'Mains',
+    name: 'Rack of Lamb Persillé',
+    desc: 'Frenched Moroccan lamb rack, herb and pistachio crust, pomme purée Robuchon, roasted baby carrots, and rosemary jus.',
+    price: 720,
+    tag: 'Local Heritage',
+    tagColor: 'rgba(95,158,120,0.18)',
+    tagText: '#5F9E78',
+    img: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&q=70&fit=crop',
+  },
+  {
+    id: 9, category: 'Mains',
+    name: 'Homard Thermidor',
+    desc: 'Brittany blue lobster, flambéed with cognac, gratinéed with Gruyère and Dijon cream, served with tarragon and rice pilaf.',
+    price: 980,
+    tag: null,
+    img: 'https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=200&q=70&fit=crop',
+  },
+  /* DESSERTS */
+  {
+    id: 10, category: 'Desserts',
+    name: 'Soufflé Grand Marnier',
+    desc: 'Ethereal warm soufflé scented with orange liqueur and Valrhona vanilla, accompanied by a cold crème anglaise. Please allow 18 minutes.',
+    price: 185,
+    tag: 'Please Pre-Order',
+    tagColor: 'rgba(100,100,180,0.18)',
+    tagText: '#9090D0',
+    img: 'https://images.unsplash.com/photo-1541599468348-e96984315921?w=200&q=70&fit=crop',
+  },
+  {
+    id: 11, category: 'Desserts',
+    name: 'Dark Chocolate Coulant',
+    desc: 'Warm 72% Valrhona bittersweet lava cake, molten Araguani center, salted caramel ice cream, and tuile dentelle.',
+    price: 165,
+    tag: 'Signature',
+    tagColor: 'rgba(201,168,76,0.18)',
+    tagText: '#C9A84C',
+    img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&q=70&fit=crop',
+  },
+  {
+    id: 12, category: 'Desserts',
+    name: 'Mille-Feuille Vanille',
+    desc: 'Caramelised puff pastry, Tahitian vanilla mousseline, raspberry coulis, and spun sugar crown — assembled à la minute.',
+    price: 145,
+    tag: null,
+    img: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=200&q=70&fit=crop',
+  },
+  {
+    id: 13, category: 'Desserts',
+    name: 'Moroccan Orange Tart',
+    desc: 'Pâte sucrée shell with orange curd from Berkane citrus, candied zest, orange blossom chantilly, and toasted almonds.',
+    price: 130,
+    tag: 'Local Heritage',
+    tagColor: 'rgba(95,158,120,0.18)',
+    tagText: '#5F9E78',
+    img: 'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=200&q=70&fit=crop',
+  },
+  /* BEVERAGES */
+  {
+    id: 14, category: 'Beverages',
+    name: 'Château Pétrus 2015',
+    desc: 'Pomerol AOC, Merlot dominant. Deep garnet, notes of plum, truffle, dark chocolate. 97/100 James Suckling. Per glass.',
+    price: 1800,
+    tag: 'Reserve Cellar',
+    tagColor: 'rgba(160,60,80,0.2)',
+    tagText: '#C07080',
+    img: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=200&q=70&fit=crop',
+  },
+  {
+    id: 15, category: 'Beverages',
+    name: 'Signature Gold Mojito',
+    desc: 'Havana Club 7-year aged rum, Moroccan fresh mint, pressed lime, gold-dusted raw cane sugar, and Perrier sparkling water.',
+    price: 145,
+    tag: 'House Special',
+    tagColor: 'rgba(201,168,76,0.18)',
+    tagText: '#C9A84C',
+    img: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=200&q=70&fit=crop',
+  },
+  {
+    id: 16, category: 'Beverages',
+    name: 'Dom Pérignon 2013',
+    desc: 'Prestige cuvée Champagne, 50% Chardonnay / 50% Pinot Noir. Toasted brioche, white peach, mineral freshness. Per glass 150ml.',
+    price: 980,
+    tag: 'Champagne',
+    tagColor: 'rgba(100,100,180,0.18)',
+    tagText: '#9090D0',
+    img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&q=70&fit=crop',
+  },
+  {
+    id: 17, category: 'Beverages',
+    name: 'Japanese Whisky Flight',
+    desc: 'Three 25ml pours — Nikka Coffey Grain, Hibiki 17, and Yamazaki 18 — paired with a Kyoto dark chocolate bite.',
+    price: 680,
+    tag: null,
+    img: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=200&q=70&fit=crop',
+  },
+  {
+    id: 18, category: 'Beverages',
+    name: 'Moroccan Rose Lemonade',
+    desc: 'Cold-pressed Marrakech rose petals, fresh lemon, acacia honey from the Rif mountains, and sparkling spring water. Non-alcoholic.',
+    price: 75,
+    tag: 'Non-Alcoholic',
+    tagColor: 'rgba(95,158,120,0.18)',
+    tagText: '#5F9E78',
+    img: 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=200&q=70&fit=crop',
+  },
+];
 
-    const RESTAURANT = {
-      name: "Maison Dorée",
-      tagline: "Modern Mediterranean Brasserie",
-      heroImage: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80",
-      table: "VIP Lounge",
-      currency: " MAD"
-    };
+const CATEGORIES = ['All', 'Starters', 'Mains', 'Desserts', 'Beverages'];
 
-    const CATEGORIES = [
-      { id: "starters", label: "Starters & Salads", emoji: "🥗" },
-      { id: "mains",    label: "Main Courses",      emoji: "🥩" },
-      { id: "desserts", label: "Desserts",          emoji: "✨" },
-      { id: "drinks",   label: "Beverages",         emoji: "🍷" }
-    ];
+/* ─── FIXED ICON HELPER (Bulletproof CDN Implementation) ─── */
+const Icon = ({ name, size = 16, color = 'currentColor', strokeWidth = 1.5 }) => {
+  const iconRef = useRef(null);
 
-    const MENU = [
-      // STARTERS & SALADS
-      { id: 1, category: "starters", name: "Burrata d'Andria", price: 120, description: "Creamy burrata, heirloom cherry tomatoes, cold-pressed basil olive oil, aged balsamic." },
-      { id: 2, category: "starters", name: "Classic Caesar Salad", price: 95, description: "Crisp romaine lettuce, parmigiano-reggiano shaving, garlic herb croutons, signature dressing." },
-      { id: 3, category: "starters", name: "Mediterranean Octopus", price: 140, description: "Thinly sliced charred octopus, citrus segment emulsion, micro-greens." },
-
-      // MAINS
-      { id: 4, category: "mains", name: "45-Day Dry Aged Entrecôte", price: 290, description: "Prime beef ribeye served with velvety pommes purée, wild mushroom jus." },
-      { id: 5, category: "mains", name: "Pan-Seared Sea Bass", price: 240, description: "Fresh local line-caught fish, asparagus spears, saffron-infused butter reduction." },
-      { id: 6, category: "mains", name: "Truffle Tagliolini", price: 185, description: "Fresh homemade egg pasta tossed in a rich Umbrian black truffle cream sauce." },
-
-      // DESSERTS
-      { id: 7, category: "desserts", name: "Le Grand Tiramisu", price: 85, description: "Layers of delicate espresso-soaked ladyfingers, velvety mascarpone cream, dark cocoa powder." },
-      { id: 8, category: "desserts", name: "Molten Chocolate Fondant", price: 90, description: "Warm Valrhona chocolate cake with a molten core, paired with premium vanilla bean gelato." },
-      { id: 9, category: "desserts", name: "Saffron Panna Cotta", price: 75, description: "Silky cream infused with local saffron strands, wild berry compote overlay." },
-
-      // BEVERAGES
-      { id: 10, category: "drinks", name: "Signature Mint Mojito", price: 65, description: "Fresh crushed garden mint, zesty lime wedges, organic brown sugar, sparkling soda." },
-      { id: 11, category: "drinks", name: "Premium Passion Fruit Mojito", price: 70, description: "Exotic passion fruit pulp, fresh lime juices, fresh mint bouquet, aromatic splash." },
-      { id: 12, category: "drinks", name: "Coca-Cola / Zero", price: 35, description: "Served perfectly chilled with sliced organic lemon and crystal ice cubes." },
-      { id: 13, category: "drinks", name: "Infused Pure Water (750ml)", price: 40, description: "Premium local spring water softly infused with fresh cucumber and mint slices." }
-    ];
-
-    function App() {
-      const [query, setQuery] = useState("");
-      const [activecat, setActivecat] = useState("starters");
-      const [toast, setToast] = useState(null);
-
-      const fireToast = (msg) => {
-        setToast(msg);
-        setTimeout(() => setToast(null), 2500);
+  useEffect(() => {
+    if (iconRef.current) {
+      iconRef.current.innerHTML = '';
+      // Dynamically generate basic paths to support Lucide keys cleanly without arrays crashing
+      const paths = {
+        search: '<circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>',
+        x: '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>',
+        bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>'
       };
 
-      // Filter logic for live search bar tracking
-      const filteredItems = MENU.filter(item => 
-        item.name.toLowerCase().includes(query.toLowerCase()) || 
-        item.description.toLowerCase().includes(query.toLowerCase())
-      );
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', size);
+      svg.setAttribute('height', size);
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', color);
+      svg.setAttribute('stroke-width', strokeWidth);
+      svg.setAttribute('stroke-linecap', 'round');
+      svg.setAttribute('stroke-linejoin', 'round');
+      svg.innerHTML = paths[name] || '';
+      iconRef.current.appendChild(svg);
+    }
+  }, [name, size, color, strokeWidth]);
 
-      return (
-        <div className="app">
-          {/* Top Hero Banner */}
-          <div className="hero">
-            <img src={RESTAURANT.heroImage} alt={RESTAURANT.name} />
-            <div className="hero-ov">
-              <div className="hero-name">{RESTAURANT.name}</div>
-              <div className="hero-sub">{RESTAURANT.tagline}</div>
-            </div>
-            <div className="table-badge">{RESTAURANT.table}</div>
+  return <span ref={iconRef} className="inline-flex items-center justify-center" />;
+};
+
+/* ─── TOAST ──────────────────────────────────────────────────── */
+const Toast = ({ visible, onHide }) => {
+  useEffect(() => {
+    if (visible) { const t = setTimeout(onHide, 3800); return () => clearTimeout(t); }
+  }, [visible, onHide]);
+  if (!visible) return null;
+  return (
+    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-toastIn">
+      <div className="toast-glass flex items-center gap-3 px-6 py-4 rounded-sm" style={{ fontFamily: 'Figtree, sans-serif' }}>
+        <span style={{ fontSize: 20 }}>🔔</span>
+        <div>
+          <p style={{ color: '#F0EDE8', fontSize: 14, fontWeight: 500, margin: 0, letterSpacing: '0.01em' }}>
+            Request sent. Your host is on the way.
+          </p>
+          <p style={{ color: 'rgba(201,168,76,0.75)', fontSize: 12, margin: '2px 0 0', letterSpacing: '0.04em' }}>
+            Estimated arrival: 2 minutes
+          </p>
+        </div>
+        <button onClick={onHide} style={{ marginLeft: 8, background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}>
+          <Icon name="x" size={14} color="rgba(240,237,232,0.4)" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+/* ─── MENU CARD ──────────────────────────────────────────────── */
+const MenuCard = ({ item, idx }) => (
+  <div className="card-glass menu-card rounded-sm p-5 flex gap-4 items-start animate-fadeSlideUp" style={{ animationDelay: `${idx * 0.04}s` }}>
+    <div className="flex-1 min-w-0">
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <h3 style={{
+          fontFamily: 'Cormorant Garamond, serif', fontSize: 21, fontWeight: 500,
+          color: '#F0EDE8', margin: 0, lineHeight: 1.2, letterSpacing: '0.01em'
+        }}>{item.name}</h3>
+        {item.tag && (
+          <span className="tag flex-shrink-0" style={{ background: item.tagColor, color: item.tagText }}>
+            {item.tag}
+          </span>
+        )}
+      </div>
+      <p style={{
+        color: 'rgba(240,237,232,0.52)', fontSize: 13.5, lineHeight: 1.6,
+        margin: '0 0 14px', fontWeight: 300
+      }}>{item.desc}</p>
+      <p style={{
+        fontFamily: 'Cormorant Garamond, serif', fontSize: 22, fontWeight: 500,
+        color: '#C9A84C', margin: 0, letterSpacing: '0.02em'
+      }}>
+        {item.price.toLocaleString('fr-MA')} <span style={{ fontSize: 13, fontWeight: 300, opacity: 0.7 }}>MAD</span>
+      </p>
+    </div>
+    <img src={item.img} alt={item.name} className="dish-img" onError={e => { e.target.style.display = 'none'; }} />
+  </div>
+);
+
+/* ─── SECTION HEADER ─────────────────────────────────────────── */
+const SectionHeader = ({ title }) => (
+  <div className="flex flex-col items-center gap-3 mb-8 mt-12 first:mt-0">
+    <p style={{ color: '#C9A84C', fontSize: 11, fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase', margin: 0 }}>
+      — {title} —
+    </p>
+    <h2 className="section-title" style={{ fontSize: 42, fontWeight: 300, margin: 0, lineHeight: 1 }}>
+      {title}
+    </h2>
+    <div className="gold-divider" />
+  </div>
+);
+
+/* ─── MAIN APP ───────────────────────────────────────────────── */
+function App() {
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('All');
+  const [toast, setToast] = useState(false);
+
+  const filtered = MENU.filter(item => {
+    const matchCat = category === 'All' || item.category === category;
+    const q = search.toLowerCase();
+    const matchQ = !q || item.name.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+
+  const grouped = CATEGORIES.slice(1).reduce((acc, cat) => {
+    const items = filtered.filter(i => i.category === cat);
+    if (items.length) acc[cat] = items;
+    return acc;
+  }, {});
+
+  const hideToast = useCallback(() => setToast(false), []);
+
+  return (
+    <div className="min-h-screen relative">
+      {/* Immersive Background */}
+      <div className="fixed inset-0 z-0" style={{
+        backgroundImage: 'url(https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=70&fit=crop)',
+        backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed',
+      }} />
+      <div className="fixed inset-0 z-0" style={{ background: 'rgba(6,4,2,0.76)' }} />
+      <div className="fixed inset-0 z-0" style={{
+        background: 'linear-gradient(to bottom, rgba(4,3,1,0.6) 0%, transparent 30%, transparent 70%, rgba(4,3,1,0.8) 100%)'
+      }} />
+
+      <div className="relative z-10">
+        {/* HERO */}
+        <section className="flex flex-col items-center justify-center text-center px-6 pt-16 pb-10">
+          <div className="hero-logo-ring mb-6 animate-fadeSlideDown">
+            <span style={{
+              fontFamily: 'Cormorant Garamond, serif', fontSize: 34, fontStyle: 'italic',
+              fontWeight: 300, color: '#C9A84C', letterSpacing: '0.06em'
+            }}>M</span>
           </div>
 
-          {/* Sticky Filtering & Navigation Control Center */}
-          <div className="sticky-bar">
-            <div className="search-wrap">
-              <input 
-                className="search-input" 
-                placeholder="Search dishes, drinks, ingredients..." 
-                value={query} 
-                onChange={e => setQuery(e.target.value)} 
+          <h1 className="animate-fadeSlideDown" style={{
+            fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(40px, 8vw, 72px)',
+            fontWeight: 300, color: '#F0EDE8', margin: '0 0 6px', letterSpacing: '0.12em',
+            textTransform: 'uppercase', animationDelay: '0.1s'
+          }}>
+            Maison Zephyr
+          </h1>
+
+          <p className="animate-fadeSlideDown" style={{
+            fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic',
+            fontSize: 'clamp(16px, 2.5vw, 20px)', color: 'rgba(201,168,76,0.8)',
+            margin: '0 0 20px', fontWeight: 300, letterSpacing: '0.05em', animationDelay: '0.2s'
+          }}>
+            An art of dining. A theatre of senses.
+          </p>
+
+          <div className="gold-divider mb-5 animate-fadeSlideDown" style={{ animationDelay: '0.25s' }} />
+
+          <div className="badge-table animate-fadeSlideDown" style={{ animationDelay: '0.35s' }}>
+            VIP Table 7 — Private Dining
+          </div>
+
+          <div className="animate-fadeSlideDown" style={{ display: 'flex', gap: 32, marginTop: 28, animationDelay: '0.45s' }}>
+            {[
+              ['Open', '19:00 – 01:00'], 
+              ['Chef', 'Youssef El Amrani'], 
+              ['Location', 'Tétouan, MA']
+            ].map(([label, val]) => (
+              <div key={label} className="text-center">
+                <p style={{ color: 'rgba(201,168,76,0.6)', fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 2px' }}>{label}</p>
+                <p style={{ color: 'rgba(240,237,232,0.75)', fontSize: 13, fontWeight: 300, margin: 0, letterSpacing: '0.02em' }}>{val}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* STICKY NAV */}
+        <div className="sticky top-0 z-30 nav-glass animate-fadeSlideDown" style={{ animationDelay: '0.5s' }}>
+          <div className="max-w-4xl mx-auto px-4 py-4">
+            <div className="relative mb-3">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2">
+                <Icon name="search" size={15} color="rgba(201,168,76,0.5)" />
+              </span>
+              <input
+                type="text"
+                placeholder="Search the menu…"
+                value={search}
+                onChange={e => { setSearch(e.target.value); setCategory('All'); }}
+                className="input-glass w-full rounded-sm pl-9 pr-4 py-2.5"
+                style={{ fontSize: 13, letterSpacing: '0.02em' }}
               />
+              {search && (
+                <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+                  <Icon name="x" size={14} color="rgba(240,237,232,0.4)" />
+                </button>
+              )}
             </div>
-            <div className="catbar">
-              {CATEGORIES.map(c => (
-                <button 
-                  key={c.id} 
-                  className={`catbtn ${activecat === c.id ? 'on' : ''}`}
-                  onClick={() => setActivecat(c.id)}
-                >
-                  {c.emoji} {c.label}
+            <div className="flex gap-1 overflow-x-auto hide-scrollbar">
+              {CATEGORIES.map(cat => (
+                <button key={cat}
+                  className={`cat-btn${category === cat && !search ? ' active' : ''}`}
+                  onClick={() => { setCategory(cat); setSearch(''); }}>
+                  {cat}
                 </button>
               ))}
             </div>
           </div>
-
-          {/* Interactive Dynamic Content Rendering */}
-          <div className="p-4 pb-24">
-            {filteredItems.filter(i => i.category === activecat).length > 0 ? (
-              filteredItems.filter(i => i.category === activecat).map(dish => (
-                <div key={dish.id} className="card" onClick={() => fireToast(`✨ Added ${dish.name} to order list`)}>
-                  <div className="flex-1">
-                    <div className="text-base font-semibold mb-1 text-[#F0EDE8]">{dish.name}</div>
-                    <div className="text-xs text-gray-400 font-light leading-relaxed mb-2">{dish.description}</div>
-                    <div className="dprice">{dish.price}{RESTAURANT.currency}</div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-12 text-sm text-gray-500">
-                No items match your specific preference.
-              </div>
-            )}
-          </div>
-
-          {/* Quick Call Waiter Floating Button */}
-          <div className="fixed bottom-6 right-6 z-50">
-            <button 
-              className="w-14 h-14 rounded-full bg-[#C9A84C] text-black shadow-xl flex items-center justify-center text-xl font-bold hover:scale-105 active:scale-95 transition-transform"
-              onClick={() => fireToast("🔔 Waiter notified. Attendant attending shortly.")}
-            >
-              🔔
-            </button>
-          </div>
-
-          {toast && <div className="toast">{toast}</div>}
+          <div className="gold-divider-full" />
         </div>
-      );
-    }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+        {/* MENU ITEMS GRID */}
+        <main className="max-w-4xl mx-auto px-4 py-10 pb-28">
+          {Object.keys(grouped).length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="no-results-icon">
+                <Icon name="search" size={22} color="rgba(201,168,76,0.4)" />
+              </div>
+              <p style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 28, fontStyle: 'italic', color: 'rgba(240,237,232,0.5)', margin: '0 0 8px' }}>
+                Nothing found
+              </p>
+              <p style={{ color: 'rgba(240,237,232,0.3)', fontSize: 13, margin: 0 }}>
+                Try a different search or browse by category.
+              </p>
+            </div>
+          ) : (
+            Object.entries(grouped).map(([cat, items]) => (
+              <section key={cat}>
+                <SectionHeader title={cat} />
+                <div className="grid gap-4 md:grid-cols-2">
+                  {items.map((item, idx) => (
+                    <MenuCard key={item.id} item={item} idx={idx} />
+                  ))}
+                </div>
+                <div className="gold-divider-full mt-10" />
+              </section>
+            ))
+          )}
+
+          {/* Footer Metadata */}
+          <div className="text-center mt-12">
+            <p style={{ color: 'rgba(240,237,232,0.25)', fontSize: 12, letterSpacing: '0.06em', fontWeight: 300 }}>
+              All prices in Moroccan Dirham (MAD) inclusive of taxes &amp; service.<br />
+              Kindly inform your host of any dietary requirements or allergies.
+            </p>
+            <p style={{ fontFamily: 'Cormorant Garamond, serif', fontStyle: 'italic', color: 'rgba(201,168,76,0.35)', fontSize: 16, marginTop: 8 }}>
+              Maison Zephyr — Tétouan, Morocco
+            </p>
+          </div>
+        </main>
+
+        {/* FLOATING ACTION WAITER CALL BUTTON */}
+        <button
+          className="call-btn fixed bottom-7 right-6 z-40 flex items-center gap-2.5 rounded-sm px-5 py-3.5 text-[#0a0806] animate-fadeSlideUp"
+          onClick={() => setToast(true)}
+          style={{ fontFamily: 'Figtree, sans-serif', fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', animationDelay: '0.8s' }}>
+          <Icon name="bell" size={15} color="#0a0806" strokeWidth={2} />
+          Call Waiter
+        </button>
+
+        <Toast visible={toast} onHide={hideToast} />
+      </div>
+    </div>
+  );
+}
+
+// Fixed target loader instantiation block
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);
+root.render(<App />);
+</script>
 </body>
 </html>
